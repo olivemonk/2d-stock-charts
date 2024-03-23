@@ -127,11 +127,12 @@ const LWCChart = () => {
         .finally(() => {
           setIndicatorLoading(false);
         });
-    } else {
+    } else if (indicator === "NONE") {
       setAdxData(undefined);
       setAroonData(undefined);
       setRsiData(undefined);
       setSmaData(undefined);
+      setIndicator("NULL");
     }
   }, [indicator]);
 
@@ -494,8 +495,11 @@ const LWCChart = () => {
             variant={indicator === "NONE" ? "default" : "ghost"}
             className="flex items-center gap-2"
             onClick={() => {
+              setAdxData(undefined);
+              setAroonData(undefined);
+              setRsiData(undefined);
+              setSmaData(undefined);
               setIndicator("NONE");
-              setIndicator("NULL");
             }}
           >
             <X />
