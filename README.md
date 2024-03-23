@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Project Name: 2d
 
-## Getting Started
+[Deployed Link](https://2d-stock-charts.vercel.app/)
 
-First, run the development server:
+![alt text](image.png)
+![alt text](image-1.png)
 
+## Overview
+This project is a web application that utilizes the AlphaVantage API for fetching stock data and Lightweight Charts for displaying it. It implements various indicators such as SMA (Simple Moving Average), RSI (Relative Strength Index), ADX (Average Directional Index), and Aroon. Additionally, it features a search functionality where users can input a ticker symbol to view candlestick graphs with the aforementioned indicators. Furthermore, a volume bar chart is included below the candlestick graph, utilizing data from AlphaVantage and Lightweight Charts.
+
+## Dependencies
+- [shadcn](https://ui.shadcn.com/)- component library
+- [lightweight-charts](https://www.npmjs.com/package/lightweight-charts) - for creating charts and graphs
+- [lucide-react](https://www.npmjs.com/package/lucide-react) icons library
+- [AlphaVantage API](https://www.alphavantage.co/documentation/#symbolsearch) Stock market data API with real time data.
+
+## Features
+
+1. **AlphaVantage API Integration**: Utilizes the AlphaVantage API to fetch stock data, ensuring real-time and accurate information for analysis.
+
+2. **Candlestick Graphs**: Displays candlestick graphs for the selected stock, offering a visual representation of price movements over time.
+
+3. **Indicator Implementation**:
+    - **SMA (Simple Moving Average)**: Helps to smooth out price data by creating a constantly updated average price.
+    - **RSI (Relative Strength Index)**: Measures the speed and change of price movements, indicating whether a stock is overbought or oversold.
+    - **ADX (Average Directional Index)**: Indicates the strength of a trend, helping traders identify whether a trend is strong or weak.
+    - **Aroon**: Helps traders identify trends and potential reversals in the market.
+
+4. **Search Functionality**: Allows users to search for a specific stock by entering its ticker symbol, providing convenience and ease of access to desired data.
+
+5. **Volume Bar Chart**: Presents the volume of trading activity for the selected stock, aiding in understanding the level of market participation and confirming price trends.
+
+6. **Interactive User Interface**: Offers an intuitive and user-friendly interface for navigating through different stocks, indicators, and time frames, enhancing the overall user experience.
+
+7. **Customization Options**: Provides options for customization such as adjusting chart settings, selecting time intervals, and toggling between different indicators, catering to the diverse needs and preferences of users.
+
+These features collectively empower users with valuable insights and tools for informed decision-making in the dynamic world of stock trading and investment.
+
+
+
+
+## Usage(try out locally)
+Clone the Repository and cd into thr folder
+```bash
+git clone https://github.com/olivemonk/2d-stock-charts.git
+cd 2d
+```
+Install Dependencies:
+```bash
+npm install
+```
+To run the project in development mode:
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Access the Application on : [http://localhost:3000](http://localhost:3000)
