@@ -426,7 +426,7 @@ const LWCChart = () => {
               onChange={(e) => setSearch(e.target.value)}
               value={search}
               className="bg-zinc-800 text-white"
-              placeholder="Enter the Ticker "
+              placeholder="Enter the Ticker (e.g. RELIANCE.BSE/TSCO.LON etc.)"
             />
             <Button type="submit">Search</Button>
           </form>
