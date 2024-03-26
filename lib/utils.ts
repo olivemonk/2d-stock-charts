@@ -1,4 +1,4 @@
-import { ADXData, AroonData, AroonResponse, DailyStockData, RSIData, SMAData, StockData } from "@/types/types";
+import { ADXData, AroonData, AroonResponse, DailyStockData, RSIData, SMAData, StockData, Ticker, TickerApiResponse } from "@/types/types";
 import { type ClassValue, clsx } from "clsx"
 import { CandlestickData, LineData, Time } from "lightweight-charts";
 import { twMerge } from "tailwind-merge"
@@ -116,3 +116,26 @@ export const formatAROONPoints = (data: AroonResponse | undefined) => {
 
   return { aroonUpData, aroonDownData };
 };
+
+export const formatTickerData = (apiResponse: TickerApiResponse): Ticker[] => {
+  const tickerData: Ticker[] = [];
+
+  if (apiResponse && apiResponse.bestMatches) {
+    apiResponse.bestMatches.forEach((match) => {
+      const { 
+        '1. symbol': symbol, 
+        '2. name': name, 
+        '3. type': type, 
+        '4. region': region, 
+        '5. marketOpen': marketOpen, 
+        '6. marketClose': marketClose, 
+        '7. timezone': timezone, 
+        '8. currency': currency, 
+        '9. matchScore': matchScore 
+      } = match;
+      tickerData.push({ symbol, name, type, region, marketOpen, marketClose, timezone, currency, matchScore });
+    });
+  }
+
+  return tickerData;
+}

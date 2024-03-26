@@ -6,6 +6,7 @@ import {
   formatRSIPoints,
   formatSMAPoints,
   formatStockData,
+  formatTickerData,
 } from "@/lib/utils";
 import {
   getADXPoints,
@@ -13,14 +14,15 @@ import {
   getRSIPoints,
   getSMAPoints,
   getStockData,
+  getTicker,
 } from "@/services/service";
 import {
   ADXData,
-  AroonData,
   AroonResponse,
   RSIData,
   SMAData,
   StockData,
+  Ticker,
 } from "@/types/types";
 import { CandlestickData, createChart, Time } from "lightweight-charts";
 import {
@@ -35,7 +37,6 @@ import {
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Separator } from "./ui/separator";
 
 type Indicator = "SMA" | "RSI" | "ADX" | "AROON" | "NONE" | "NULL";
 
@@ -43,6 +44,8 @@ const LWCChart = () => {
   const [stockData, setStockData] = useState<StockData | undefined>(undefined);
   const [symbol, setSymbol] = useState<string>("IBM");
   const [search, setSearch] = useState<string>("");
+  const [tickers, setTickers] = useState<Ticker[]>();
+  const [tickerLoading, setTickerLoading] = useState<boolean>(false);
 
   const [smaData, setSmaData] = useState<SMAData | undefined>(undefined);
   const [rsiData, setRsiData] = useState<RSIData | undefined>(undefined);
@@ -58,6 +61,28 @@ const LWCChart = () => {
   const [indicator, setIndicator] = useState<Indicator>("NULL");
 
   const [candlePrice, setCandlePrice] = useState<CandlestickData<Time>>();
+
+  useEffect(() => {
+    setTickerLoading(true);
+    const debounceFn = setTimeout(() => {
+      getTicker(search)
+        .then((data) => {
+          const formattedData = formatTickerData(data);
+          setTickers(formattedData);
+          console.log(tickers);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          setTickerLoading(false);
+        });
+    }, 500);
+
+    return () => {
+      clearTimeout(debounceFn);
+    };
+  }, [search]);
 
   useEffect(() => {
     setLoading(true);
@@ -160,6 +185,27 @@ const LWCChart = () => {
       const rsiChart = rsiRef.current && createChart(rsiRef.current);
       const adxChart = adxRef.current && createChart(adxRef.current);
       const aroonChart = aroonRef.current && createChart(aroonRef.current);
+
+      const numIndicatorCharts =
+        (rsiData ? 1 : 0) + (adxData ? 1 : 0) + (aroonData ? 1 : 0);
+      const chartWidth = window.innerWidth - 20;
+
+      let chartHeightRatio;
+      if (numIndicatorCharts === 1) {
+        chartHeightRatio = 0.5;
+      } else if (numIndicatorCharts === 2) {
+        chartHeightRatio = 1 / 3;
+      } else if (numIndicatorCharts === 3) {
+        chartHeightRatio = 0.25;
+      } else {
+        chartHeightRatio = 1;
+      }
+      const availableHeight = window.innerHeight - 150;
+      const chartHeight = Math.min(
+        availableHeight,
+        chartHeightRatio * window.innerHeight
+      );
+
       chart.applyOptions({
         layout: {
           background: { color: "#222" },
@@ -169,17 +215,8 @@ const LWCChart = () => {
           vertLines: { color: "#444" },
           horzLines: { color: "#444" },
         },
-        width: window.innerWidth,
-        height:
-          (rsiChart ? 1 : 0) + (adxChart ? 1 : 0) + (aroonChart ? 1 : 0) === 0
-            ? 800
-            : (rsiChart ? 1 : 0) + (adxChart ? 1 : 0) + (aroonChart ? 1 : 0) ===
-              3
-            ? 200
-            : (rsiChart ? 1 : 0) + (adxChart ? 1 : 0) + (aroonChart ? 1 : 0) ===
-              2
-            ? 400
-            : 600,
+        width: chartWidth,
+        height: chartHeight,
         localization: {
           locale: "en-IN",
           priceFormatter: (price: number) => {
@@ -203,7 +240,7 @@ const LWCChart = () => {
             vertLines: { color: "#444" },
             horzLines: { color: "#444" },
           },
-          width: window.innerWidth,
+          width: window.innerWidth - 20,
           height: 200,
         });
 
@@ -244,7 +281,7 @@ const LWCChart = () => {
             vertLines: { color: "#444" },
             horzLines: { color: "#444" },
           },
-          width: window.innerWidth,
+          width: window.innerWidth - 20,
           height: 200,
         });
 
@@ -285,7 +322,7 @@ const LWCChart = () => {
             vertLines: { color: "#444" },
             horzLines: { color: "#444" },
           },
-          width: window.innerWidth,
+          width: window.innerWidth - 20,
           height: 200,
         });
 
@@ -413,7 +450,6 @@ const LWCChart = () => {
 
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // console.log("searching for ", symbol);
     setSymbol(search);
   };
 
@@ -421,14 +457,31 @@ const LWCChart = () => {
     <div>
       <div className="flex items-center justify-between px-10 pb-4 pt-4">
         <div className="flex items-center gap-8 text-muted-foreground">
-          <form onSubmit={handleSearch} className="flex items-center gap-2">
-            <Input
-              onChange={(e) => setSearch(e.target.value)}
-              value={search}
-              className="bg-zinc-800 text-white"
-              placeholder="Enter the Ticker (e.g. RELIANCE.BSE/TSCO.LON etc.)"
-            />
-            <Button type="submit">Search</Button>
+          <form onSubmit={handleSearch} className=" ">
+            <div className="relative flex items-center gap-2">
+              <Input
+                onChange={(e) => setSearch(e.target.value)}
+                value={search}
+                className="bg-zinc-800 text-white w-[300px]"
+                placeholder="Enter the Ticker (e.g. RELIANCE.BSE/TSCO.LON etc.)"
+              />
+              <Button type="submit">Search</Button>
+            </div>
+            <div className=" absolute z-50  shadow-md p-1 w- mt-2 rounded bg-zinc-800 ">
+              {tickers &&
+                tickers.map((ticker, index) => (
+                  <h2
+                    key={index}
+                    onClick={() => {
+                      setSymbol(ticker.symbol)
+                      setTickers(undefined)
+                    }}
+                    className=" p-3  hover:bg-zinc-700 text-white cursor-pointer truncate rounded text-wrap"
+                  >
+                    {ticker.name}
+                  </h2>
+                ))}
+            </div>
           </form>
           <Button
             variant={indicator === "SMA" || smaData ? "default" : "ghost"}
